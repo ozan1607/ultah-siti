@@ -342,7 +342,7 @@ MOMENTS.forEach((m, i) => {
         <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Upload foto
       </div>
-      <input type="file" accept="image/*" class="m-photo-input" data-index="${i}" onchange="handleCardUpload(event, ${i})">
+      
     </div>
     <div class="m-card-body">
       <div class="m-card-emoji">${m.emoji}</div>
@@ -425,9 +425,6 @@ function updateDetailPhoto(index) {
   }
 }
 
-function triggerDetailUpload() {
-  document.getElementById('d-file-input').click();
-}
 
 function handleDetailUpload(event) {
   if (activeIndex === null) return;
