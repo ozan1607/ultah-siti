@@ -313,6 +313,15 @@ MOMENTS.forEach((m, i) => {
   card.dataset.index = i;
   card.onclick = () => showDetail(i);
 
+  // Render kartu
+const grid = document.getElementById('grid');
+MOMENTS.forEach((m, i) => {
+  const card = document.createElement('div');
+  card.className = 'm-card';
+  card.style.animationDelay = (i * 0.07) + 's';
+  card.dataset.index = i;
+  card.onclick = () => showDetail(i);
+
   card.innerHTML = `
     <div class="m-photo-wrap">
       <div class="m-photo-placeholder">
@@ -325,6 +334,8 @@ MOMENTS.forEach((m, i) => {
       <div class="m-card-label">${m.label}</div>
     </div>
   `;
+  grid.appendChild(card);
+});
   grid.appendChild(card);
 });
 
@@ -356,26 +367,29 @@ function showDetail(index) {
   dTitle.textContent = moment.title;
   dDesc.textContent = moment.desc;
 
-  // Show emoji placeholder (no image upload)
-  dImg.style.display = 'none';
-  dPlaceholder.innerHTML = `
-    <span>${moment.emoji}</span>
-    <p>Kenangan indah bersamamu ✨</p>
-  `;
-  dPlaceholder.style.display = 'flex';
+  if (moment.image) {
+    // Tampilkan foto jika ada
+    dImg.src = moment.image;
+    dImg.style.display = 'block';
+    dPlaceholder.style.display = 'none';
+  } else {
+    // Placeholder jika tidak ada foto
+    dImg.style.display = 'none';
+    dPlaceholder.innerHTML = `
+      <span>${moment.emoji}</span>
+      <p>Kenangan indah bersamamu ✨</p>
+    `;
+    dPlaceholder.style.display = 'flex';
+  }
 
   // Show detail panel
   detail.classList.add('show');
   detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // Remove active class from all cards
-  document.querySelectorAll('.m-card').forEach(card => {
-    card.classList.remove('active');
-  });
-  // Add active class to clicked card
+  // Active card
+  document.querySelectorAll('.m-card').forEach(card => card.classList.remove('active'));
   document.querySelector(`[data-index="${index}"]`).classList.add('active');
 }
-
 function closeDetail() {
   document.getElementById('detail').classList.remove('show');
   document.querySelectorAll('.m-card').forEach(card => {
