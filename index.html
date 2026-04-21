@@ -252,59 +252,21 @@ const MOMENTS = [
   {
     emoji: "❤️",
     label: "Foto pertama",
-    title: "Ni foto yang pertama naa",
+    title: "Selfie pertama kita",
     desc: "Ozan kalau liat foto ni kek apaa yak ko ada yaa manusia secakep kamu bisa ma ozan hehehe",
-    image: "foto1.jpeg"
+    image: "foto1.jpg"  // ← PASTIKAN NAMA FILE SAMA PERSIS
   },
   {
     emoji: "🍜",
-    label: "Makan bareng favorit",
-    title: "Makan bareng yang nggak terlupakan",
-    desc: "Entah kenapa makanan apapun selalu lebih enak kalau dinikmati bareng kamu. Dari warung kecil sampai resto — semua jadi kenangan indah. 😋"
-  },
-  {
-    emoji: "🌊",
-    label: "Liburan pantai",
-    title: "Main di tepi pantai bareng",
-    desc: "Angin, pasir, dan suara ombak... tapi yang paling indah tetap tawa kamu saat kita lari-larian di pantai. Momen itu tersimpan rapi di hatiku. 🏖️"
-  },
-  {
-    emoji: "🌙",
-    label: "Ngobrol sampai malam",
-    title: "Ngobrol sampai larut malam",
-    desc: "Nggak terasa obrolan kita bisa sampai jam 3 pagi. Dari hal sepele sampai mimpi-mimpi besar — semua terasa ringan karena ada kamu. 🌟"
-  },
-  {
-    emoji: "🎬",
-    label: "Nonton bareng",
-    title: "Nonton film bareng kamu",
-    desc: "Film apapun jadi lebih seru karena ada kamu di sebelah. Bahkan di adegan sedih pun kamu bisa bikin aku ketawa. Kamu memang nggak ada duanya. 🍿"
-  },
-  {
-    emoji: "🤝",
-    label: "Susah senang bareng",
-    title: "Melewati suka dan duka bersama",
-    desc: "Di saat-saat paling berat sekalipun, kamu selalu ada. Nggak banyak bicara, tapi kehadiranmu sudah lebih dari cukup. Makasih selalu ada ya. 💪"
-  },
-  {
-    emoji: "🎂",
-    label: "Ultah spesial",
-    title: "Merayakan hari ulang tahunmu",
-    desc: "Hari ini adalah hari yang sangat spesial — hari lahirmu! Semoga setiap hari ke depan dipenuhi kebahagiaan, tawa, dan hal-hal indah yang kamu impikan. Happy birthday! 🎉"
-  },
-  {
-    emoji: "☕",
-    label: "Ngopi santai",
-    title: "Ngopi dan ngobrol santai",
-    desc: "Kopi pagi bareng kamu selalu jadi awal hari yang sempurna. Cerita-cerita kecil sambil menikmati secangkir kopi — sederhana tapi selalu bikin bahagia. ☀️"
+    label: "Makan bareng",
+    title: "Makan bareng favorit",
+    desc: "Entah kenapa makanan apapun selalu lebih enak kalau dinikmati bareng kamu.",
+    image: "foto2.jpg"
   }
+  // Tambah momen lain...
 ];
-/* ============================================================
-   SELESAI BAGIAN EDIT
-   ============================================================ */
 
-
-// Render kartu
+// Render kartu DENGAN FOTO
 const grid = document.getElementById('grid');
 MOMENTS.forEach((m, i) => {
   const card = document.createElement('div');
@@ -313,21 +275,16 @@ MOMENTS.forEach((m, i) => {
   card.dataset.index = i;
   card.onclick = () => showDetail(i);
 
-  // Render kartu
-const grid = document.getElementById('grid');
-MOMENTS.forEach((m, i) => {
-  const card = document.createElement('div');
-  card.className = 'm-card';
-  card.style.animationDelay = (i * 0.07) + 's';
-  card.dataset.index = i;
-  card.onclick = () => showDetail(i);
+  const photoContent = m.image ? 
+    `<img src="${m.image}" alt="${m.label}" loading="lazy" style="display:block;" onerror="this.nextElementSibling.style.display='flex'; this.style.display='none';">` : 
+    `<div class="m-photo-placeholder" style="display:flex;">
+       <span>${m.emoji}</span>
+       <small>${m.label}</small>
+     </div>`;
 
   card.innerHTML = `
     <div class="m-photo-wrap">
-      <div class="m-photo-placeholder">
-        <span>${m.emoji}</span>
-        <small>${m.label}</small>
-      </div>
+      ${photoContent}
     </div>
     <div class="m-card-body">
       <div class="m-card-emoji">${m.emoji}</div>
@@ -336,8 +293,41 @@ MOMENTS.forEach((m, i) => {
   `;
   grid.appendChild(card);
 });
-  grid.appendChild(card);
-});
+
+// Fungsi detail DENGAN FOTO
+function showDetail(index) {
+  const moment = MOMENTS[index];
+  const detail = document.getElementById('detail');
+  const dImg = document.getElementById('d-img');
+  const dPlaceholder = document.getElementById('d-placeholder');
+  const dEmoji = document.getElementById('d-emoji');
+  const dTitle = document.getElementById('d-title');
+  const dDesc = document.getElementById('d-desc');
+
+  dEmoji.textContent = moment.emoji;
+  dTitle.textContent = moment.title;
+  dDesc.textContent = moment.desc;
+
+  if (moment.image) {
+    dImg.src = moment.image;
+    dImg.style.display = 'block';
+    dImg.onerror = function() {
+      console.log('Foto error:', moment.image);
+      dImg.style.display = 'none';
+      dPlaceholder.innerHTML = `<span>${moment.emoji}</span><p>Foto tidak ditemukan 😅</p>`;
+      dPlaceholder.style.display = 'flex';
+    };
+    dPlaceholder.style.display = 'none';
+  } else {
+    dImg.style.display = 'none';
+    dPlaceholder.innerHTML = `<span>${moment.emoji}</span><p>Kenangan indah ✨</p>`;
+    dPlaceholder.style.display = 'flex';
+  }
+
+  detail.classList.add('show');
+  document.querySelectorAll('.m-card').forEach(c => c.classList.remove('active'));
+  document.querySelector(`[data-index="${index}"]`).classList.add('active');
+}
 
 // Fungsi navigasi
 function showGallery() {
