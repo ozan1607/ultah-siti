@@ -18,7 +18,7 @@
   --muted:   #8a6878;
   --white:   #fff;
   --shadow:  0 8px 32px rgba(232,71,106,0.12);
-} 
+}
 
 html, body {
   min-height: 100vh;
@@ -101,7 +101,7 @@ html, body {
 .m-photo-wrap {
   width: 100%;
   aspect-ratio: 4/3;
-  background: var(--rose-lt);
+  background: linear-gradient(135deg, var(--rose-lt), #f9e4ec);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -109,7 +109,13 @@ html, body {
   justify-content: center;
   flex-shrink: 0;
 }
-.m-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.m-photo-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
 .m-photo-placeholder {
   display: flex;
   flex-direction: column;
@@ -143,16 +149,22 @@ html, body {
 
 .detail-photo-wrap {
   width: 100%;
-  max-height: 320px;
+  aspect-ratio: 4/3;
   overflow: hidden;
-  background: var(--rose-lt);
+  background: linear-gradient(135deg, var(--rose-lt), #f9e4ec);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   min-height: 160px;
 }
-.detail-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; max-height: 320px; }
+.detail-photo-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
 .detail-photo-placeholder {
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   color: var(--rose); padding: 2rem;
@@ -173,26 +185,6 @@ html, body {
 .back-link button { background: none; border: none; color: var(--muted); font-size: 0.85rem; cursor: pointer; font-family: 'DM Sans', sans-serif; text-decoration: underline; }
 .footer-heart { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 2rem; padding-bottom: 1.5rem; }
 .footer-heart span { color: var(--rose); display: inline-block; animation: pulse-dot 1.4s ease-in-out infinite; }
-/* ===== FOTO SAMA PERSIS - Kecil & Besar ===== */
-.m-photo-wrap img,
-.detail-photo-wrap img,
-img[alt*="foto"] {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;  /* UTUH, NO ZOOM */
-  object-position: center !important;
-  display: block !important;
-  border-radius: 12px !important;
-  background: linear-gradient(135deg, #fde8ee, #f8e1ea) !important;
-}
-
-.m-photo-wrap,
-.detail-photo-wrap {
-  width: 100% !important;
-  aspect-ratio: 4/3 !important;  /* KONSISTEN */
-  background: linear-gradient(135deg, var(--rose-lt), #f9e4ec) !important;
-  position: relative;
-}
 </style>
 </head>
 <body>
@@ -207,46 +199,40 @@ img[alt*="foto"] {
   <div class="intro-deco deco-br">🌷</div>
   <div class="cake-anim">🎂</div>
 
-  <!-- =============================================
-       EDIT UCAPAN DI BAWAH INI
-  ============================================== -->
   <div class="hbd-line">Selamat Ulang Tahun, Sayanggg</div>
-  <div class="hbd-sub">May your wishes come true xixixi </div>
-  <!-- ============================================ -->
+  <div class="hbd-sub">May your wishes come true xixixi</div>
 
   <div class="hearts-row">
     <div class="h-dot"></div><div class="h-dot"></div><div class="h-dot"></div>
   </div>
-  <button class="cta-btn" onclick="showGallery()">Klik ini sengg </button>
+  <button class="cta-btn" onclick="showGallery()">Klik ini sengg</button>
 </div>
 
 <!-- GALLERY -->
 <div id="gallery" class="screen">
   <div class="gallery-header">
-    <h1>Foto favorit </h1>
+    <h1>Foto favorit</h1>
     <p>di klik yaa kartunya buat ngeliat deskripsi potonya</p>
   </div>
 
-  <!-- Detail panel (muncul saat kartu diklik) -->
+  <!-- Detail panel -->
   <div id="detail">
-  <div class="detail-photo-wrap">
-    <img id="d-img" src="" alt="Kenangan" style="width:100%; display:none;">
-    
-    <div id="d-placeholder" class="detail-photo-placeholder">
-       <span>📷</span>
-       <p>Kenangan Kita</p>
+    <div class="detail-photo-wrap">
+      <img id="d-img" src="" alt="Kenangan" style="display:none;">
+      <div id="d-placeholder" class="detail-photo-placeholder">
+        <span>📷</span>
+        <p>Kenangan Kita</p>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-top">
+        <div class="detail-big-emoji" id="d-emoji"></div>
+        <div class="detail-title" id="d-title"></div>
+      </div>
+      <div class="detail-desc" id="d-desc"></div>
+      <button class="detail-close" onclick="closeDetail()">✕ Tutup</button>
     </div>
   </div>
-
-  <div class="detail-body">
-    <div class="detail-top">
-      <div class="detail-big-emoji" id="d-emoji"></div>
-      <div class="detail-title" id="d-title"></div>
-    </div>
-    <div class="detail-desc" id="d-desc"></div>
-    <button class="detail-close" onclick="closeDetail()">✕ Tutup</button>
-  </div>
-</div>
 
   <div class="moments-grid" id="grid"></div>
 
@@ -259,14 +245,12 @@ img[alt*="foto"] {
 <script>
 /* ============================================================
    DATA MOMEN — EDIT DI SINI
-   ─────────────────────────
    emoji  : emoji kartu
    label  : teks pendek di kartu
    title  : judul di panel detail
    desc   : cerita / deskripsi panjang
-   
-   Tambah momen → salin satu blok { ... }, dan tempel di bawah
-   Hapus momen  → hapus satu blok { ... }, beserta koma-nya
+   image  : nama file foto (taruh 1 folder sama file HTML ini)
+            kosongkan ("") kalau belum ada foto
    ============================================================ */
 const MOMENTS = [
   {
@@ -274,112 +258,49 @@ const MOMENTS = [
     label: "Foto pertama",
     title: "Foto manusia cakep",
     desc: "Ozan kalau liat foto ni kek apaa yak ko ada yaa manusia secakep kamu bisa ma ozan hehehe",
-    image: "foto1.jpeg"  // ← PASTIKAN NAMA FILE SAMA PERSIS
+    image: "foto1.jpeg"
   },
   {
     emoji: "🩷",
     label: "Foto kedua",
     title: "Ni foto manusia cakep lagi",
     desc: "Nah ini poto waktu kapan yak, oiya yang waktu di kopkit yang poluntir",
-    image: "foto99.jpeg"
+    image: "foto2.jpeg"
   },
   {
     emoji: "💛",
-    label: "Foto ketigak",
-    title: "Foto MBG(Mai Biutipul Girlpren)",
+    label: "Foto ketiga",
+    title: "Foto MBG (Mai Biutipul Girlpren)",
     desc: "inii sii maspterpisnyaa",
-    image: "foto99.jpeg"
+    image: "foto3.jpeg"
   },
   {
     emoji: "🩶",
     label: "Foto keempat",
-    title: "Foto MBG(Mai Bini Guweh hehehe)",
+    title: "Foto MBG (Mai Bini Guweh hehehe)",
     desc: "Ga bisa berword-word saking sakepnya",
-    image: "foto99.jpeg"
+    image: "foto4.jpeg"
   },
   {
     emoji: "😒",
-    label: "Foto Kelimak",
+    label: "Foto kelima",
     title: "Ini poto pertama kali kita potbar",
     desc: "zuzur ozan keringat dingin waktu tu sampe menggereteks",
-    image: "foto99.jpeg"
+    image: "foto5.jpeg"
   },
   {
     emoji: "🫣",
-    label: "Foto Terakhir",
+    label: "Foto terakhir",
     title: "poto bagus",
     desc: "bgs",
-    image: "foto99.jpeg"
+    image: "foto6.jpeg"
   }
-  
 ];
-// **FUNGSI TUTUP DETAIL - TAMBAHAN INI**
-function closeDetail() {
-  document.getElementById('detail').classList.remove('show');
-  document.querySelectorAll('.m-card').forEach(c => c.classList.remove('active'));
-}
-// RENDER KARTU BARU - COPY INI
-const grid = document.getElementById('grid');
-grid.innerHTML = ''; // Clear dulu
 
-MOMENTS.forEach((m, i) => {
-  const card = document.createElement('div');
-  card.className = 'm-card';
-  card.style.animationDelay = `${i * 0.07}s`;
-  card.dataset.index = i;
-  card.onclick = () => showDetail(i);
+/* ============================================================
+   FUNGSI-FUNGSI UTAMA
+   ============================================================ */
 
-  const hasImage = m.image && m.image.trim() !== '';
-  
-  card.innerHTML = `
-    <div class="m-photo-wrap">
-      ${hasImage ? 
-        `<img src="${m.image}" alt="${m.label}" loading="lazy">` :
-        `<div class="m-photo-placeholder">
-          <span>${m.emoji}</span>
-          <small>${m.label}</small>
-        </div>`
-      }
-    </div>
-    <div class="m-card-body">
-      <div class="m-card-emoji">${m.emoji}</div>
-      <div class="m-card-label">${m.label}</div>
-    </div>
-  `;
-  grid.appendChild(card);
-});
-
-function showDetail(index) {
-  const m = MOMENTS[index];
-  const detail = document.getElementById('detail');
-  const dImg = document.getElementById('d-img');
-  const dPlaceholder = document.getElementById('d-placeholder');
-  
-  // Text
-  document.getElementById('d-emoji').textContent = m.emoji;
-  document.getElementById('d-title').textContent = m.title;
-  document.getElementById('d-desc').textContent = m.desc;
-
-  if (m.image && m.image.trim() !== '') {
-    dImg.src = m.image;
-    dImg.style.display = 'block';
-    dImg.onerror = () => {
-      dImg.style.display = 'none';
-      dPlaceholder.innerHTML = `<span>${m.emoji}</span><p>No image</p>`;
-      dPlaceholder.style.display = 'flex';
-    };
-    dPlaceholder.style.display = 'none';
-  } else {
-    dImg.style.display = 'none';
-    dPlaceholder.innerHTML = `<span>${m.emoji}</span><p>${m.label}</p>`;
-    dPlaceholder.style.display = 'flex';
-  }
-
-  detail.classList.add('show');
-  document.querySelectorAll('.m-card').forEach(c => c.classList.remove('active'));
-  document.querySelector(`[data-index="${index}"]`).classList.add('active');
-}
-// Fungsi navigasi
 function showGallery() {
   document.getElementById('intro').classList.remove('active');
   document.getElementById('gallery').classList.add('active');
@@ -389,15 +310,52 @@ function showGallery() {
 function showIntro() {
   document.getElementById('gallery').classList.remove('active');
   document.getElementById('intro').classList.add('active');
-  document.getElementById('detail').classList.remove('show');
+  closeDetail();
 }
-// Confetti effect
+
+function closeDetail() {
+  document.getElementById('detail').classList.remove('show');
+  document.querySelectorAll('.m-card').forEach(c => c.classList.remove('active'));
+}
+
+function showDetail(index) {
+  const m = MOMENTS[index];
+  const detail = document.getElementById('detail');
+  const dImg = document.getElementById('d-img');
+  const dPlaceholder = document.getElementById('d-placeholder');
+
+  document.getElementById('d-emoji').textContent = m.emoji;
+  document.getElementById('d-title').textContent = m.title;
+  document.getElementById('d-desc').textContent = m.desc;
+
+  if (m.image && m.image.trim() !== '') {
+    dImg.src = m.image;
+    dImg.style.display = 'block';
+    dPlaceholder.style.display = 'none';
+    dImg.onerror = () => {
+      dImg.style.display = 'none';
+      dPlaceholder.innerHTML = `<span>${m.emoji}</span><p>Foto belum ada 📷</p>`;
+      dPlaceholder.style.display = 'flex';
+    };
+  } else {
+    dImg.style.display = 'none';
+    dImg.src = '';
+    dPlaceholder.innerHTML = `<span>${m.emoji}</span><p>${m.label}</p>`;
+    dPlaceholder.style.display = 'flex';
+  }
+
+  detail.classList.add('show');
+  detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  document.querySelectorAll('.m-card').forEach(c => c.classList.remove('active'));
+  document.querySelector(`[data-index="${index}"]`).classList.add('active');
+}
+
 function createConfetti() {
   const confettiLayer = document.getElementById('confetti-layer');
   confettiLayer.innerHTML = '';
-
   const colors = ['#e8476a', '#e8a23a', '#fde8ee', '#b52f4f', '#fdf6ef'];
-  
+
   for (let i = 0; i < 100; i++) {
     const piece = document.createElement('div');
     piece.className = 'c-piece';
@@ -408,35 +366,62 @@ function createConfetti() {
     piece.style.animationDuration = (Math.random() * 3 + 2) + 's';
     piece.style.animationDelay = Math.random() * 0.5 + 's';
     confettiLayer.appendChild(piece);
-    
-    // Remove after animation
+
     setTimeout(() => {
-      if (piece.parentNode) {
-        piece.parentNode.removeChild(piece);
-      }
-    }, 5000);
+      if (piece.parentNode) piece.parentNode.removeChild(piece);
+    }, 5500);
   }
 }
 
-// Auto confetti on load
+/* ============================================================
+   RENDER KARTU
+   ============================================================ */
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  MOMENTS.forEach((m, i) => {
+    const card = document.createElement('div');
+    card.className = 'm-card';
+    card.style.animationDelay = `${i * 0.07}s`;
+    card.dataset.index = i;
+    card.onclick = () => showDetail(i);
+
+    const hasImage = m.image && m.image.trim() !== '';
+
+    card.innerHTML = `
+      <div class="m-photo-wrap">
+        ${hasImage
+          ? `<img src="${m.image}" alt="${m.label}" loading="lazy">`
+          : `<div class="m-photo-placeholder"><span>${m.emoji}</span><small>${m.label}</small></div>`
+        }
+      </div>
+      <div class="m-card-body">
+        <div class="m-card-emoji">${m.emoji}</div>
+        <div class="m-card-label">${m.label}</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+/* ============================================================
+   INISIALISASI
+   ============================================================ */
 window.addEventListener('load', () => {
-  setTimeout(createConfetti, 1000);
+  renderGrid();
+  setTimeout(createConfetti, 800);
 });
 
-// Touch/swipe support for mobile
+/* Swipe up untuk tutup detail di mobile */
 let startY = 0;
-document.addEventListener('touchstart', e => {
-  startY = e.touches[0].clientY;
-});
+document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; });
 document.addEventListener('touchend', e => {
   const endY = e.changedTouches[0].clientY;
-  if (startY - endY > 50) { // Swipe up
-    if (document.getElementById('gallery').classList.contains('active')) {
-      closeDetail();
-    }
+  if (startY - endY > 50 && document.getElementById('gallery').classList.contains('active')) {
+    closeDetail();
   }
 });
 </script>
-
 </body>
 </html>
