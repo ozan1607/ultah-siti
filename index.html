@@ -393,13 +393,8 @@ function handleCardUpload(event, index) {
 function updateThumb(index) {
   const img = document.getElementById(`thumb-img-${index}`);
   const placeholder = document.getElementById(`thumb-placeholder-${index}`);
-  
-  // Logika: Gunakan foto yang baru diupload (photoStore), 
-  // kalau tidak ada, gunakan foto default dari data MOMENTS (image)
-  const imgSrc = photoStore[index] || MOMENTS[index].image;
-
-  if (imgSrc) {
-    img.src = imgSrc;
+  if (photoStore[index]) {
+    img.src = photoStore[index];
     img.style.display = 'block';
     placeholder.style.display = 'none';
   }
@@ -487,7 +482,6 @@ for (let i = 0; i < 35; i++) {
   `;
   layer.appendChild(el);
 }
-MOMENTS.forEach((_, i) => updateThumb(i));
 </script>
 </body>
 </html>
