@@ -173,6 +173,24 @@ html, body {
 .back-link button { background: none; border: none; color: var(--muted); font-size: 0.85rem; cursor: pointer; font-family: 'DM Sans', sans-serif; text-decoration: underline; }
 .footer-heart { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 2rem; padding-bottom: 1.5rem; }
 .footer-heart span { color: var(--rose); display: inline-block; animation: pulse-dot 1.4s ease-in-out infinite; }
+  /* PERFECT FOTO FIT */
+.m-photo-wrap, .detail-photo-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.m-photo-wrap img, .detail-photo-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;        /* ← UTUH, ADA PADDING */
+  object-position: center;
+  display: block;
+  background: var(--rose-lt);
+}
+
+.m-photo-wrap img.portrait {
+  object-fit: cover;          /* Portrait = crop sedikit */
+}
 </style>
 </head>
 <body>
@@ -360,6 +378,7 @@ function showDetail(index) {
   if (moment.image) {
     // Tampilkan foto jika ada
     dImg.src = moment.image;
+    dImg.className = 'full-fit';
     dImg.style.display = 'block';
     dPlaceholder.style.display = 'none';
   } else {
