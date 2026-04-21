@@ -209,22 +209,24 @@ html, body {
 
   <!-- Detail panel (muncul saat kartu diklik) -->
   <div id="detail">
-    <div class="detail-photo-wrap" id="d-photo-wrap">
-      <div class="detail-photo-placeholder" id="d-placeholder">
-        <span>📷</span>
-        <p>Belum ada foto</p>
-      </div>
-      <img id="d-img" src="" alt="" style="display:none">
-    </div>
-    <div class="detail-body">
-      <div class="detail-top">
-        <div class="detail-big-emoji" id="d-emoji"></div>
-        <div class="detail-title" id="d-title"></div>
-      </div>
-      <div class="detail-desc" id="d-desc"></div>
-      <button class="detail-close" onclick="closeDetail()">✕ Tutup</button>
+  <div class="detail-photo-wrap">
+    <img id="d-img" src="" alt="Kenangan" style="width:100%; display:none;">
+    
+    <div id="d-placeholder" class="detail-photo-placeholder">
+       <span>📷</span>
+       <p>Kenangan Kita</p>
     </div>
   </div>
+
+  <div class="detail-body">
+    <div class="detail-top">
+      <div class="detail-big-emoji" id="d-emoji"></div>
+      <div class="detail-title" id="d-title"></div>
+    </div>
+    <div class="detail-desc" id="d-desc"></div>
+    <button class="detail-close" onclick="closeDetail()">✕ Tutup</button>
+  </div>
+</div>
 
   <div class="moments-grid" id="grid"></div>
 
@@ -251,7 +253,8 @@ const MOMENTS = [
     emoji: "❤️",
     label: "Foto pertama",
     title: "Ni foto yang pertama naa",
-    desc: "Ozan kalau liat foto ni kek apaa yak ko ada yaa manusia secakep kamu bisa ma ozan hehehe"
+    desc: "Ozan kalau liat foto ni kek apaa yak ko ada yaa manusia secakep kamu bisa ma ozan hehehe",
+    image: "foto1.jpeg"
   },
   {
     emoji: "🍜",
