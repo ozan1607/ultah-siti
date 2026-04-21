@@ -232,7 +232,6 @@ html, body {
         <p>Belum ada foto — upload di kartu</p>
       </div>
       <img id="d-img" src="" alt="" style="display:none">
-      <button class="detail-change-btn" id="d-change-btn" style="display:none" onclick="triggerDetailUpload()">Ganti foto</button>
     </div>
     <div class="detail-body">
       <div class="detail-top">
@@ -363,13 +362,12 @@ MOMENTS.forEach((m, i) => {
 
 function renderCards() {
   const grid = document.getElementById('grid');
-  grid.innerHTML = ''; // Kosongkan grid dulu
-  
+  grid.innerHTML = ''; 
   MOMENTS.forEach((m, i) => {
     const card = document.createElement('div');
     card.className = 'm-card';
     
-    // Kita cuma mau nampilin foto, jadi TIDAK BOLEH ada tag <input> di sini
+    // Versi ini hanya menampilkan gambar, tanpa tombol pilih file
     card.innerHTML = `
       <div class="m-photo-wrap">
         <img src="${m.image}" alt="${m.label}" style="width:100%; height:100%; object-fit:cover;">
@@ -380,10 +378,6 @@ function renderCards() {
     `;
 
     card.onclick = () => openDetail(i);
-    grid.appendChild(card);
-  });
-}
-    card.addEventListener('click', () => openDetail(i));
     grid.appendChild(card);
   });
 }
