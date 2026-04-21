@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selamat Ulang Tahun Sayang 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --rose:    #e8476a;
+  --rose-lt: #fde8ee;
+  --rose-dk: #b52f4f;
+  --gold:    #e8a23a;
+  --cream:   #fdf6ef;
+  --ink:     #2a1a22;
+  --muted:   #8a6878;
+  --white:   #fff;
+  --shadow:  0 8px 32px rgba(232,71,106,0.12);
+}
+
+html, body {
+  min-height: 100vh;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* CONFETTI */
+#confetti-layer { position: fixed; inset: 0; pointer-events: none; z-index: 10; overflow: hidden; }
+.c-piece { position: absolute; top: -20px; border-radius: 2px; animation: fall linear infinite; opacity: 0; }
+@keyframes fall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(800deg); opacity: 0; }
+}
+
+/* SCREENS */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* ===== INTRO ===== */
+#intro {
+  flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 2rem; position: relative;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 20%, rgba(232,71,106,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 80% 80%, rgba(232,162,58,0.07) 0%, transparent 70%),
+    var(--cream);
+}
+.intro-deco { position: absolute; font-size: 5rem; opacity: 0.06; user-select: none; pointer-events: none; }
+.deco-tl { top: 5%; left: 3%; transform: rotate(-20deg); }
+.deco-tr { top: 8%; right: 4%; transform: rotate(15deg); }
+.deco-bl { bottom: 8%; left: 5%; transform: rotate(10deg); }
+.deco-br { bottom: 5%; right: 3%; transform: rotate(-15deg); }
+.cake-anim { font-size: 5.5rem; animation: cake-float 3s ease-in-out infinite; filter: drop-shadow(0 8px 16px rgba(232,71,106,0.2)); margin-bottom: 1.5rem; display: inline-block; }
+@keyframes cake-float {
+  0%,100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-14px) scale(1.04); }
+}
+.hbd-line { font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 5vw, 3.2rem); font-weight: 600; color: var(--rose); line-height: 1.2; opacity: 0; animation: rise 1s ease 0.3s forwards; }
+.hbd-sub { font-size: 1rem; color: var(--muted); font-weight: 300; margin-top: 0.6rem; letter-spacing: 0.04em; opacity: 0; animation: rise 1s ease 0.7s forwards; }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.hearts-row { display: flex; gap: 8px; justify-content: center; margin: 1.4rem 0; opacity: 0; animation: rise 1s ease 1s forwards; }
+.h-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rose); animation: pulse-dot 1.8s ease-in-out infinite; }
+.h-dot:nth-child(2) { animation-delay: 0.2s; background: var(--gold); }
+.h-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse-dot { 0%,100%{transform:scale(1)} 50%{transform:scale(1.5)} }
+.cta-btn { padding: 0.85rem 2.4rem; border-radius: 50px; background: var(--rose); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500; border: none; cursor: pointer; letter-spacing: 0.03em; box-shadow: 0 6px 24px rgba(232,71,106,0.3); transition: transform 0.15s, box-shadow 0.15s; opacity: 0; animation: rise 1s ease 1.3s forwards; }
+.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(232,71,106,0.35); }
+.cta-btn:active { transform: scale(0.97); }
+
+/* ===== GALLERY ===== */
+#gallery { flex-direction: column; padding: 2rem 1.5rem; max-width: 760px; margin: 0 auto; width: 100%; }
+.gallery-header { text-align: center; margin-bottom: 2rem; animation: rise 0.6s ease both; }
+.gallery-header h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--rose); font-style: italic; }
+.gallery-header p { font-size: 0.88rem; color: var(--muted); margin-top: 0.35rem; }
+
+/* MOMENTS GRID */
+.moments-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-bottom: 2rem; }
+
+.m-card {
+  background: var(--white);
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 12px rgba(42,26,34,0.07);
+  transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+  animation: pop-in 0.4s ease both;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.m-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+.m-card.active { border-color: var(--rose); box-shadow: 0 0 0 4px rgba(232,71,106,0.12); }
+@keyframes pop-in { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+
+/* PHOTO AREA */
+.m-photo-wrap {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--rose-lt);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.m-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.m-photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--rose);
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-align: center;
+  padding: 0.5rem;
+}
+.m-photo-placeholder span { font-size: 2rem; }
+.upload-overlay {
+  position: absolute; inset: 0;
+  background: rgba(232,71,106,0.75);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 500;
+  flex-direction: column;
+  gap: 4px;
+}
+.upload-overlay svg { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2; }
+.m-card:hover .upload-overlay { opacity: 1; }
+.m-photo-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 2; }
+
+/* CARD BOTTOM */
+.m-card-body { padding: 0.75rem 0.9rem; flex: 1; }
+.m-card-emoji { font-size: 1.2rem; }
+.m-card-label { font-size: 0.8rem; font-weight: 500; color: var(--ink); margin-top: 2px; line-height: 1.35; }
+
+/* DETAIL PANEL */
+#detail {
+  display: none;
+  background: var(--white);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1.5px solid var(--rose-lt);
+  margin-bottom: 2rem;
+  animation: rise 0.4s ease both;
+}
+#detail.show { display: block; }
+
+.detail-photo-wrap {
+  width: 100%;
+  max-height: 320px;
+  overflow: hidden;
+  background: var(--rose-lt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 160px;
+}
+.detail-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; max-height: 320px; }
+.detail-photo-placeholder {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--rose); padding: 2rem;
+}
+.detail-photo-placeholder span { font-size: 3rem; }
+.detail-photo-placeholder p { font-size: 0.85rem; color: var(--muted); }
+
+.detail-change-btn {
+  position: absolute; bottom: 10px; right: 10px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid var(--rose-lt);
+  color: var(--rose);
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s;
+  z-index: 2;
+}
+.detail-change-btn:hover { background: var(--rose-lt); }
+.detail-photo-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 3; }
+
+.detail-body { padding: 1.4rem 1.5rem; }
+.detail-top { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.detail-big-emoji { font-size: 2rem; }
+.detail-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--rose); line-height: 1.3; }
+.detail-desc { font-size: 0.93rem; color: var(--ink); line-height: 1.75; margin-bottom: 1rem; }
+.detail-close { background: none; border: 1px solid var(--rose-lt); color: var(--rose); padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.82rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+.detail-close:hover { background: var(--rose-lt); }
+
+/* FOOTER */
+.back-link { text-align: center; margin-top: 0.5rem; }
+.back-link button { background: none; border: none; color: var(--muted); font-size: 0.85rem; cursor: pointer; font-family: 'DM Sans', sans-serif; text-decoration: underline; }
+.footer-heart { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 2rem; padding-bottom: 1.5rem; }
+.footer-heart span { color: var(--rose); display: inline-block; animation: pulse-dot 1.4s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<div id="confetti-layer"></div>
+
+<!-- INTRO -->
+<div id="intro" class="screen active">
+  <div class="intro-deco deco-tl">🌸</div>
+  <div class="intro-deco deco-tr">🎀</div>
+  <div class="intro-deco deco-bl">✨</div>
+  <div class="intro-deco deco-br">🌷</div>
+  <div class="cake-anim">🎂</div>
+
+  <!-- =============================================
+       EDIT UCAPAN DI BAWAH INI
+  ============================================== -->
+  <div class="hbd-line">Selamat Ulang Tahun, Sayanggg</div>
+  <div class="hbd-sub">May your wishes come true xixixi ✨</div>
+  <!-- ============================================ -->
+
+  <div class="hearts-row">
+    <div class="h-dot"></div><div class="h-dot"></div><div class="h-dot"></div>
+  </div>
+  <button class="cta-btn" onclick="showGallery()">Klik ini sengg </button>
+</div>
+
+<!-- GALLERY -->
+<div id="gallery" class="screen">
+  <div class="gallery-header">
+    <h1>Foto favorit </h1>
+    <p>Tap kartu untuk lihat detail · Hover kartu untuk upload foto 📸</p>
+  </div>
+
+  <!-- Detail panel (muncul saat kartu diklik) -->
+  <div id="detail">
+    <div class="detail-photo-wrap" id="d-photo-wrap">
+      <div class="detail-photo-placeholder" id="d-placeholder">
+        <span>📷</span>
+        <p>Belum ada foto — upload di kartu</p>
+      </div>
+      <img id="d-img" src="" alt="" style="display:none">
+      <button class="detail-change-btn" id="d-change-btn" style="display:none" onclick="triggerDetailUpload()">Ganti foto</button>
+      <input type="file" accept="image/*" class="detail-photo-input" id="d-file-input" onchange="handleDetailUpload(event)">
+    </div>
+    <div class="detail-body">
+      <div class="detail-top">
+        <div class="detail-big-emoji" id="d-emoji"></div>
+        <div class="detail-title" id="d-title"></div>
+      </div>
+      <div class="detail-desc" id="d-desc"></div>
+      <button class="detail-close" onclick="closeDetail()">✕ Tutup</button>
+    </div>
+  </div>
+
+  <div class="moments-grid" id="grid"></div>
+
+  <div class="back-link">
+    <button onclick="showIntro()">← Kembali ke halaman utama</button>
+  </div>
+  <div class="footer-heart">Lop banyakbanyak ♥♥♥♥♥♥</div>
+</div>
+
+<script>
+/* ============================================================
+   DATA MOMEN — EDIT DI SINI
+   ─────────────────────────
+   emoji  : emoji kartu
+   label  : teks pendek di kartu
+   title  : judul di panel detail
+   desc   : cerita / deskripsi panjang
+   
+   Tambah momen → salin satu blok { ... }, dan tempel di bawah
+   Hapus momen  → hapus satu blok { ... }, beserta koma-nya
+   ============================================================ */
+const MOMENTS = [
+  {
+    emoji: "❤️",
+    label: "Foto pertama",
+    title: "Ni foto yang pertama naa",
+    desc: "Ozan kalau liat foto ni kek apaa yak ko ada yaa manusia secakep kamu bisa ma ozan hehehe"
+  },
+  {
+    emoji: "🍜",
+    label: "Makan bareng favorit",
+    title: "Makan bareng yang nggak terlupakan",
+    desc: "Entah kenapa makanan apapun selalu lebih enak kalau dinikmati bareng kamu. Dari warung kecil sampai resto — semua jadi kenangan indah. 😋"
+  },
+  {
+    emoji: "🌊",
+    label: "Liburan pantai",
+    title: "Main di tepi pantai bareng",
+    desc: "Angin, pasir, dan suara ombak... tapi yang paling indah tetap tawa kamu saat kita lari-larian di pantai. Momen itu tersimpan rapi di hatiku. 🏖️"
+  },
+  {
+    emoji: "🌙",
+    label: "Ngobrol sampai malam",
+    title: "Ngobrol sampai larut malam",
+    desc: "Nggak terasa obrolan kita bisa sampai jam 3 pagi. Dari hal sepele sampai mimpi-mimpi besar — semua terasa ringan karena ada kamu. 🌟"
+  },
+  {
+    emoji: "🎬",
+    label: "Nonton bareng",
+    title: "Nonton film bareng kamu",
+    desc: "Film apapun jadi lebih seru karena ada kamu di sebelah. Bahkan di adegan sedih pun kamu bisa bikin aku ketawa. Kamu memang nggak ada duanya. 🍿"
+  },
+  {
+    emoji: "🤝",
+    label: "Susah senang bareng",
+    title: "Melewati suka dan duka bersama",
+    desc: "Di saat-saat paling berat sekalipun, kamu selalu ada. Nggak banyak bicara, tapi kehadiranmu sudah lebih dari cukup. Makasih selalu ada ya. 💪"
+  },
+  {
+    emoji: "🎂",
+    label: "Ultah spesial",
+    title: "Merayakan hari ulang tahunmu",
+    desc: "Hari ini adalah hari yang sangat spesial — hari lahirmu! Semoga setiap hari ke depan dipenuhi kebahagiaan, tawa, dan hal-hal indah yang kamu impikan. Happy birthday! 🎉"
+  },
+  {
+    emoji: "☕",
+    label: "Ngopi santai",
+    title: "Ngopi dan ngobrol santai",
+    desc: "Kopi pagi bareng kamu selalu jadi awal hari yang sempurna. Cerita-cerita kecil sambil menikmati secangkir kopi — sederhana tapi selalu bikin bahagia. ☀️"
+  }
+];
+/* ============================================================
+   SELESAI BAGIAN EDIT
+   ============================================================ */
+
+
+// State: simpan foto per momen (index → dataURL)
+const photoStore = {};
+let activeIndex = null;
+
+// Render kartu
+const grid = document.getElementById('grid');
+MOMENTS.forEach((m, i) => {
+  const card = document.createElement('div');
+  card.className = 'm-card';
+  card.style.animationDelay = (i * 0.07) + 's';
+  card.dataset.index = i;
+
+  card.innerHTML = `
+    <div class="m-photo-wrap" id="thumb-wrap-${i}">
+      <div class="m-photo-placeholder" id="thumb-placeholder-${i}">
+        <span>${m.emoji}</span>
+        <small>Tap untuk lihat<br>Hover untuk upload</small>
+      </div>
+      <img id="thumb-img-${i}" src="" alt="${m.label}" style="display:none; width:100%; height:100%; object-fit:cover;">
+      <div class="upload-overlay">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload foto
+      </div>
+      <input type="file" accept="image/*" class="m-photo-input" data-index="${i}" onchange="handleCardUpload(event, ${i})">
+    </div>
+    <div class="m-card-body">
+      <div class="m-card-emoji">${m.emoji}</div>
+      <div class="m-card-label">${m.label}</div>
+    </div>
+  `;
+
+  // Klik buka detail (hanya di area body, bukan upload)
+  card.querySelector('.m-card-body').addEventListener('click', () => openDetail(i, card));
+  card.querySelector('.m-photo-wrap').addEventListener('click', (e) => {
+    // Jika bukan dari input file, buka detail
+    if (!e.target.matches('input[type=file]')) openDetail(i, card);
+  });
+
+  grid.appendChild(card);
+});
+
+function handleCardUpload(event, index) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    photoStore[index] = e.target.result;
+    updateThumb(index);
+    // Jika detail panel sedang menampilkan momen ini, update juga
+    if (activeIndex === index) updateDetailPhoto(index);
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateThumb(index) {
+  const img = document.getElementById(`thumb-img-${index}`);
+  const placeholder = document.getElementById(`thumb-placeholder-${index}`);
+  
+  // Logika: Gunakan foto yang baru diupload (photoStore), 
+  // kalau tidak ada, gunakan foto default dari data MOMENTS (image)
+  const imgSrc = photoStore[index] || MOMENTS[index].image;
+
+  if (imgSrc) {
+    img.src = imgSrc;
+    img.style.display = 'block';
+    placeholder.style.display = 'none';
+  }
+}
+
+function openDetail(i, card) {
+  document.querySelectorAll('.m-card').forEach(c => c.classList.remove('active'));
+  if (card) card.classList.add('active');
+  activeIndex = i;
+  const m = MOMENTS[i];
+  document.getElementById('d-emoji').textContent = m.emoji;
+  document.getElementById('d-title').textContent = m.title;
+  document.getElementById('d-desc').textContent = m.desc;
+  updateDetailPhoto(i);
+  const panel = document.getElementById('detail');
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function updateDetailPhoto(index) {
+  const dImg = document.getElementById('d-img');
+  const dPlaceholder = document.getElementById('d-placeholder');
+  const dChangeBtn = document.getElementById('d-change-btn');
+  if (photoStore[index]) {
+    dImg.src = photoStore[index];
+    dImg.style.display = 'block';
+    dPlaceholder.style.display = 'none';
+    dChangeBtn.style.display = 'block';
+  } else {
+    dImg.style.display = 'none';
+    dPlaceholder.style.display = 'flex';
+    dChangeBtn.style.display = 'none';
+  }
+}
+
+function triggerDetailUpload() {
+  document.getElementById('d-file-input').click();
+}
+
+function handleDetailUpload(event) {
+  if (activeIndex === null) return;
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    photoStore[activeIndex] = e.target.result;
+    updateThumb(activeIndex);
+    updateDetailPhoto(activeIndex);
+  };
+  reader.readAsDataURL(file);
+}
+
+function closeDetail() {
+  document.getElementById('detail').classList.remove('show');
+  document.querySelectorAll('.m-card').forEach(c => c.classList.remove('active'));
+  activeIndex = null;
+}
+
+function showGallery() {
+  document.getElementById('intro').classList.remove('active');
+  document.getElementById('gallery').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showIntro() {
+  document.getElementById('gallery').classList.remove('active');
+  document.getElementById('intro').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Confetti
+const C_COLORS = ['#e8476a','#f9a8d4','#e8a23a','#fcd34d','#86efac','#93c5fd','#d8b4fe'];
+const layer = document.getElementById('confetti-layer');
+for (let i = 0; i < 35; i++) {
+  const el = document.createElement('div');
+  el.className = 'c-piece';
+  const size = 6 + Math.random() * 7;
+  el.style.cssText = `
+    left:${Math.random()*100}%;
+    width:${size}px; height:${size}px;
+    background:${C_COLORS[Math.floor(Math.random()*C_COLORS.length)]};
+    border-radius:${Math.random()>.5?'50%':'3px'};
+    animation-duration:${3+Math.random()*3}s;
+    animation-delay:${Math.random()*5}s;
+  `;
+  layer.appendChild(el);
+}
+MOMENTS.forEach((_, i) => updateThumb(i));
+</script>
+</body>
+</html>
