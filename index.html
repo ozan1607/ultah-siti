@@ -173,23 +173,28 @@ html, body {
 .back-link button { background: none; border: none; color: var(--muted); font-size: 0.85rem; cursor: pointer; font-family: 'DM Sans', sans-serif; text-decoration: underline; }
 .footer-heart { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 2rem; padding-bottom: 1.5rem; }
 .footer-heart span { color: var(--rose); display: inline-block; animation: pulse-dot 1.4s ease-in-out infinite; }
-  /* PERFECT FOTO FIT */
-.m-photo-wrap, .detail-photo-wrap {
-  position: relative;
-  overflow: hidden;
+/* ===== FOTO FIT PERFECT - OVERRIDE ===== */
+.m-photo-wrap img,
+.detail-photo-wrap img,
+#thumb-img-${i} {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;  /* UTUH, BUKAN ZOOM */
+  object-position: center !important;
+  display: block !important;
+  border-radius: 12px !important;
 }
 
-.m-photo-wrap img, .detail-photo-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;        /* ← UTUH, ADA PADDING */
-  object-position: center;
-  display: block;
-  background: var(--rose-lt);
+/* Background padding */
+.m-photo-wrap,
+.detail-photo-wrap {
+  background: linear-gradient(135deg, var(--rose-lt), #f9e4ec) !important;
+  position: relative !important;
 }
 
-.m-photo-wrap img.portrait {
-  object-fit: cover;          /* Portrait = crop sedikit */
+/* Detail foto max height */
+.detail-photo-wrap {
+  max-height: 350px !important;
 }
 </style>
 </head>
@@ -284,25 +289,28 @@ const MOMENTS = [
   // Tambah momen lain...
 ];
 
-// Render kartu DENGAN FOTO
+// RENDER KARTU BARU - COPY INI
 const grid = document.getElementById('grid');
+grid.innerHTML = ''; // Clear dulu
+
 MOMENTS.forEach((m, i) => {
   const card = document.createElement('div');
   card.className = 'm-card';
-  card.style.animationDelay = (i * 0.07) + 's';
+  card.style.animationDelay = `${i * 0.07}s`;
   card.dataset.index = i;
   card.onclick = () => showDetail(i);
 
-  const photoContent = m.image ? 
-    `<img src="${m.image}" alt="${m.label}" loading="lazy" style="display:block;" onerror="this.nextElementSibling.style.display='flex'; this.style.display='none';">` : 
-    `<div class="m-photo-placeholder" style="display:flex;">
-       <span>${m.emoji}</span>
-       <small>${m.label}</small>
-     </div>`;
-
+  const hasImage = m.image && m.image.trim() !== '';
+  
   card.innerHTML = `
     <div class="m-photo-wrap">
-      ${photoContent}
+      ${hasImage ? 
+        `<img src="${m.image}" alt="${m.label}" loading="lazy">` :
+        `<div class="m-photo-placeholder">
+          <span>${m.emoji}</span>
+          <small>${m.label}</small>
+        </div>`
+      }
     </div>
     <div class="m-card-body">
       <div class="m-card-emoji">${m.emoji}</div>
@@ -312,33 +320,29 @@ MOMENTS.forEach((m, i) => {
   grid.appendChild(card);
 });
 
-// Fungsi detail DENGAN FOTO
 function showDetail(index) {
-  const moment = MOMENTS[index];
+  const m = MOMENTS[index];
   const detail = document.getElementById('detail');
   const dImg = document.getElementById('d-img');
   const dPlaceholder = document.getElementById('d-placeholder');
-  const dEmoji = document.getElementById('d-emoji');
-  const dTitle = document.getElementById('d-title');
-  const dDesc = document.getElementById('d-desc');
+  
+  // Text
+  document.getElementById('d-emoji').textContent = m.emoji;
+  document.getElementById('d-title').textContent = m.title;
+  document.getElementById('d-desc').textContent = m.desc;
 
-  dEmoji.textContent = moment.emoji;
-  dTitle.textContent = moment.title;
-  dDesc.textContent = moment.desc;
-
-  if (moment.image) {
-    dImg.src = moment.image;
+  if (m.image && m.image.trim() !== '') {
+    dImg.src = m.image;
     dImg.style.display = 'block';
-    dImg.onerror = function() {
-      console.log('Foto error:', moment.image);
+    dImg.onerror = () => {
       dImg.style.display = 'none';
-      dPlaceholder.innerHTML = `<span>${moment.emoji}</span><p>Foto tidak ditemukan 😅</p>`;
+      dPlaceholder.innerHTML = `<span>${m.emoji}</span><p>No image</p>`;
       dPlaceholder.style.display = 'flex';
     };
     dPlaceholder.style.display = 'none';
   } else {
     dImg.style.display = 'none';
-    dPlaceholder.innerHTML = `<span>${moment.emoji}</span><p>Kenangan indah ✨</p>`;
+    dPlaceholder.innerHTML = `<span>${m.emoji}</span><p>${m.label}</p>`;
     dPlaceholder.style.display = 'flex';
   }
 
@@ -346,7 +350,6 @@ function showDetail(index) {
   document.querySelectorAll('.m-card').forEach(c => c.classList.remove('active'));
   document.querySelector(`[data-index="${index}"]`).classList.add('active');
 }
-
 // Fungsi navigasi
 function showGallery() {
   document.getElementById('intro').classList.remove('active');
