@@ -244,7 +244,17 @@ html, body {
 .footer-heart { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 2rem; padding-bottom: 1.5rem; }
 </style>
 </head>
+<button id="musicBtn" onclick="toggleMusic()" style="
+  position: fixed; bottom: 20px; right: 20px; z-index: 999;
+  background: var(--rose); color: white; border: none;
+  border-radius: 50%; width: 48px; height: 48px;
+  font-size: 1.3rem; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(232,71,106,0.4);
+  transition: transform 0.15s;">🎵</button>
 <body>
+<audio id="bgMusic" loop>
+  <source src="lagu.mp3" type="audio/mpeg">
+</audio>
 
 <!-- floating hearts bg -->
 <div id="hearts-bg"></div>
@@ -480,21 +490,31 @@ function sendHug() {
 /* ═══════════════════════════════════════════════════
    MUSIC
 ═══════════════════════════════════════════════════ */
+const music = document.getElementById('bgMusic');
 let musicPlaying = false;
+
 function toggleMusic() {
-  const audio = document.getElementById('bg-music');
-  const btn   = document.getElementById('music-btn');
+  const btn = document.getElementById('musicBtn');
   if (musicPlaying) {
-    audio.pause();
+    music.pause();
     btn.textContent = '🎵';
-    btn.classList.remove('playing');
+    musicPlaying = false;
   } else {
-    audio.play().catch(() => {}); // catch autoplay block
-    btn.textContent = '🎶';
-    btn.classList.add('playing');
+    music.play();
+    btn.textContent = '🔇';
+    musicPlaying = true;
   }
-  musicPlaying = !musicPlaying;
 }
+
+// Auto play saat tombol intro diklik
+const oriShowGallery = showGallery;
+showGallery = function() {
+  oriShowGallery();
+  music.play().then(() => {
+    musicPlaying = true;
+    document.getElementById('musicBtn').textContent = '🔇';
+  }).catch(() => {});
+};
 
 /* ═══════════════════════════════════════════════════
    COUNTDOWN — ganti tanggal ultah di sini!
