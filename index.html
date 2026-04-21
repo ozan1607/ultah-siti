@@ -122,6 +122,21 @@ html, body {
   padding: 0.5rem;
 }
 .m-photo-placeholder span { font-size: 2rem; }
+.upload-overlay {
+  position: absolute; inset: 0;
+  background: rgba(232,71,106,0.75);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 500;
+  flex-direction: column;
+  gap: 4px;
+}
+.upload-overlay svg { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2; }
+.m-card:hover .upload-overlay { opacity: 1; }
+.m-photo-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 2; }
 
 /* CARD BOTTOM */
 .m-card-body { padding: 0.75rem 0.9rem; flex: 1; }
@@ -208,7 +223,7 @@ html, body {
        EDIT UCAPAN DI BAWAH INI
   ============================================== -->
   <div class="hbd-line">Selamat Ulang Tahun, Sayanggg</div>
-  <div class="hbd-sub">May your wishes come true xixixi ✨</div>
+  <div class="hbd-sub">May your wishes come true xixixi </div>
   <!-- ============================================ -->
 
   <div class="hearts-row">
@@ -221,7 +236,7 @@ html, body {
 <div id="gallery" class="screen">
   <div class="gallery-header">
     <h1>Foto favorit </h1>
-    <p>klik salah satu kartu untuk nengok deskripsinya yaww</p>
+    <p>Tap kartu untuk lihat detail · Hover kartu untuk upload foto 📸</p>
   </div>
 
   <!-- Detail panel (muncul saat kartu diklik) -->
@@ -232,6 +247,8 @@ html, body {
         <p>Belum ada foto — upload di kartu</p>
       </div>
       <img id="d-img" src="" alt="" style="display:none">
+      <button class="detail-change-btn" id="d-change-btn" style="display:none" onclick="triggerDetailUpload()">Ganti foto</button>
+      <input type="file" accept="image/*" class="detail-photo-input" id="d-file-input" onchange="handleDetailUpload(event)">
     </div>
     <div class="detail-body">
       <div class="detail-top">
@@ -273,9 +290,9 @@ const MOMENTS = [
   },
   {
     emoji: "🍜",
-    label: "Foto kedua",
-    title: "Foto imut kiyut",
-    desc: "Foto kamu kick nii sangat imut dan kiyut mana ada kumisnya lagi kek kusyink"
+    label: "Makan bareng favorit",
+    title: "Makan bareng yang nggak terlupakan",
+    desc: "Entah kenapa makanan apapun selalu lebih enak kalau dinikmati bareng kamu. Dari warung kecil sampai resto — semua jadi kenangan indah. 😋"
   },
   {
     emoji: "🌊",
@@ -342,7 +359,7 @@ MOMENTS.forEach((m, i) => {
         <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Upload foto
       </div>
-      
+      <input type="file" accept="image/*" class="m-photo-input" data-index="${i}" onchange="handleCardUpload(event, ${i})">
     </div>
     <div class="m-card-body">
       <div class="m-card-emoji">${m.emoji}</div>
@@ -360,32 +377,25 @@ MOMENTS.forEach((m, i) => {
   grid.appendChild(card);
 });
 
-function renderCards() {
-  const grid = document.getElementById('grid');
-  grid.innerHTML = ''; 
-  MOMENTS.forEach((m, i) => {
-    const card = document.createElement('div');
-    card.className = 'm-card';
-    
-    // Versi ini hanya menampilkan gambar, tanpa tombol pilih file
-    card.innerHTML = `
-      <div class="m-photo-wrap">
-        <img src="${m.image}" alt="${m.label}" style="width:100%; height:100%; object-fit:cover;">
-      </div>
-      <div class="m-card-body">
-        <div class="m-card-label">${m.label}</div>
-      </div>
-    `;
-
-    card.onclick = () => openDetail(i);
-    grid.appendChild(card);
-  });
+function handleCardUpload(event, index) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    photoStore[index] = e.target.result;
+    updateThumb(index);
+    // Jika detail panel sedang menampilkan momen ini, update juga
+    if (activeIndex === index) updateDetailPhoto(index);
+  };
+  reader.readAsDataURL(file);
 }
+
 function updateThumb(index) {
   const img = document.getElementById(`thumb-img-${index}`);
   const placeholder = document.getElementById(`thumb-placeholder-${index}`);
   
-  // Logika: Cek foto upload manual dulu, kalau gak ada pake foto dari data MOMENTS
+  // Logika: Gunakan foto yang baru diupload (photoStore), 
+  // kalau tidak ada, gunakan foto default dari data MOMENTS (image)
   const imgSrc = photoStore[index] || MOMENTS[index].image;
 
   if (imgSrc) {
@@ -425,6 +435,9 @@ function updateDetailPhoto(index) {
   }
 }
 
+function triggerDetailUpload() {
+  document.getElementById('d-file-input').click();
+}
 
 function handleDetailUpload(event) {
   if (activeIndex === null) return;
