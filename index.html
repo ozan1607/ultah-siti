@@ -236,7 +236,7 @@ html, body {
 <div id="gallery" class="screen">
   <div class="gallery-header">
     <h1>Foto favorit </h1>
-    <p>Tap kartu untuk lihat detail · Hover kartu untuk upload foto 📸</p>
+    <p>di klik yaa kartunya buat ngeliat deskripsi potonya</p>
   </div>
 
   <!-- Detail panel (muncul saat kartu diklik) -->
@@ -405,18 +405,28 @@ function updateThumb(index) {
   }
 }
 
-function openDetail(i, card) {
-  document.querySelectorAll('.m-card').forEach(c => c.classList.remove('active'));
-  if (card) card.classList.add('active');
-  activeIndex = i;
+function openDetail(i) {
   const m = MOMENTS[i];
+  const dImg = document.getElementById('d-img');
+  const dPlaceholder = document.getElementById('d-placeholder');
+
+  // Mengambil nama file foto dari data MOMENTS
+  if (m.image) {
+    dImg.src = m.image; // Ini akan memanggil foto1.jpeg dsb
+    dImg.style.display = 'block';
+    dPlaceholder.style.display = 'none';
+  } else {
+    dImg.style.display = 'none';
+    dPlaceholder.style.display = 'flex';
+  }
+
   document.getElementById('d-emoji').textContent = m.emoji;
   document.getElementById('d-title').textContent = m.title;
   document.getElementById('d-desc').textContent = m.desc;
-  updateDetailPhoto(i);
-  const panel = document.getElementById('detail');
-  panel.classList.add('show');
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  
+  // Tampilkan panel detail
+  document.getElementById('detail').classList.add('show');
+  document.getElementById('detail').scrollIntoView({ behavior: 'smooth' });
 }
 
 function updateDetailPhoto(index) {
