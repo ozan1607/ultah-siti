@@ -393,8 +393,12 @@ function handleCardUpload(event, index) {
 function updateThumb(index) {
   const img = document.getElementById(`thumb-img-${index}`);
   const placeholder = document.getElementById(`thumb-placeholder-${index}`);
-  if (photoStore[index]) {
-    img.src = photoStore[index];
+  
+  // Logika: Cek foto upload manual dulu, kalau gak ada pake foto dari data MOMENTS
+  const imgSrc = photoStore[index] || MOMENTS[index].image;
+
+  if (imgSrc) {
+    img.src = imgSrc;
     img.style.display = 'block';
     placeholder.style.display = 'none';
   }
@@ -482,6 +486,7 @@ for (let i = 0; i < 35; i++) {
   `;
   layer.appendChild(el);
 }
+MOMENTS.forEach((_, i) => updateThumb(i));
 </script>
 </body>
 </html>
