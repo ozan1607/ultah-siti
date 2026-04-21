@@ -362,53 +362,6 @@ function showIntro() {
   document.getElementById('intro').classList.add('active');
   document.getElementById('detail').classList.remove('show');
 }
-
-function showDetail(index) {
-  const moment = MOMENTS[index];
-  const detail = document.getElementById('detail');
-  const dPhotoWrap = document.getElementById('d-photo-wrap');
-  const dPlaceholder = document.getElementById('d-placeholder');
-  const dImg = document.getElementById('d-img');
-  const dEmoji = document.getElementById('d-emoji');
-  const dTitle = document.getElementById('d-title');
-  const dDesc = document.getElementById('d-desc');
-
-  // Update content
-  dEmoji.textContent = moment.emoji;
-  dTitle.textContent = moment.title;
-  dDesc.textContent = moment.desc;
-
-  if (moment.image) {
-    // Tampilkan foto jika ada
-    dImg.src = moment.image;
-    dImg.className = 'full-fit';
-    dImg.style.display = 'block';
-    dPlaceholder.style.display = 'none';
-  } else {
-    // Placeholder jika tidak ada foto
-    dImg.style.display = 'none';
-    dPlaceholder.innerHTML = `
-      <span>${moment.emoji}</span>
-      <p>Kenangan indah bersamamu ✨</p>
-    `;
-    dPlaceholder.style.display = 'flex';
-  }
-
-  // Show detail panel
-  detail.classList.add('show');
-  detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  // Active card
-  document.querySelectorAll('.m-card').forEach(card => card.classList.remove('active'));
-  document.querySelector(`[data-index="${index}"]`).classList.add('active');
-}
-function closeDetail() {
-  document.getElementById('detail').classList.remove('show');
-  document.querySelectorAll('.m-card').forEach(card => {
-    card.classList.remove('active');
-  });
-}
-
 // Confetti effect
 function createConfetti() {
   const confettiLayer = document.getElementById('confetti-layer');
